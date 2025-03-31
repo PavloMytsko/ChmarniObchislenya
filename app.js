@@ -14,30 +14,27 @@ const port = process.env.PORT || 3000;
 //     password: '',
 //     database: 'Lab2-CC'
 // });
-const isLocal = process.env.AZURE_MYSQL_SSL === 'false';
+const isAzure = process.env.AZURE_MYSQL_HOST !== undefined;
 
-require('dotenv').config();
-
-const db = mysql.createConnection({
+const dbConfig = {
     host: process.env.AZURE_MYSQL_HOST || 'localhost',
     user: process.env.AZURE_MYSQL_USER || 'root',
     password: process.env.AZURE_MYSQL_PASSWORD || '',
     database: process.env.AZURE_MYSQL_DATABASE || 'Lab2-CC',
-   
-});
+};
 
-// Додаємо SSL тільки якщо ми **НЕ** працюємо локально
-if (!isLocal) {
-    db.ssl = { rejectUnauthorized: true };
-} 
+// Якщо працюємо в Azure, додаємо SSL
+if (isAzure) {
+    dbConfig.ssl = {
+        rejectUnauthorized: true
+    };
 
-db.connect(err => {
-    if (err) {
-        console.error('Помилка підключення до MySQL:', err);
-    } else {
-        console.log('Підключено до MySQL');
-    }
-});
+    // Якщо потрібно використовувати сертифікат:
+    // dbConfig.ssl.ca = fs.readFileSync('/path/to/BaltimoreCyberTrustRoot.crt.pem');
+}
+
+const db = mysql.createConnection(dbConfig);
+
 
 
 db.connect(err => {
