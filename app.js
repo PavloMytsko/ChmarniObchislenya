@@ -14,15 +14,15 @@ const port = process.env.PORT || 3000;
 //     password: '',
 //     database: 'Lab2-CC'
 // });
-const isLocal = process.env.DB_HOST === 'localhost';
+const isLocal = process.env.AZURE_MYSQL_SSL === 'false';
 
 require('dotenv').config();
 
 const db = mysql.createConnection({
-    host: process.env.DB_HOST || 'my-mysql-server.mysql.database.azure.com',
-    user: process.env.DB_USER || 'your-mysql-user',
-    password: process.env.DB_PASSWORD || '',
-    database: process.env.DB_DATABASE || 'usersdb',
+    host: process.env.AZURE_MYSQL_HOST || 'localhost',
+    user: process.env.AZURE_MYSQL_USER || 'root',
+    password: process.env.AZURE_MYSQL_PASSWORD || '',
+    database: process.env.AZURE_MYSQL_DATABASE || 'Lab2-CC',
    
 });
 
