@@ -8,12 +8,38 @@ const port = process.env.PORT || 3000;
 
 // Налаштування підключення до MySQL (замінити на свої дані в Azure)
 
+// const db = mysql.createConnection({
+//     host: 'localhost',
+//     user: 'root',
+//     password: '',
+//     database: 'Lab2-CC'
+// });
+const isLocal = process.env.DB_HOST === 'localhost';
+
+require('dotenv').config();
+
 const db = mysql.createConnection({
-    host: 'localhost',
-    user: 'root',
-    password: '',
-    database: 'Lab2-CC'
+    host: process.env.DB_HOST || 'my-mysql-server.mysql.database.azure.com',
+    user: process.env.DB_USER || 'your-mysql-user',
+    password: process.env.DB_PASSWORD || '',
+    database: process.env.DB_DATABASE || 'usersdb',
+   
 });
+
+// Додаємо SSL тільки якщо ми **НЕ** працюємо локально
+if (!isLocal) {
+    db.ssl = { rejectUnauthorized: true };
+} 
+
+db.connect(err => {
+    if (err) {
+        console.error('Помилка підключення до MySQL:', err);
+    } else {
+        console.log('Підключено до MySQL');
+    }
+});
+
+
 db.connect(err => {
     if (err) {
         console.error('Помилка підключення до MySQL:', err);
